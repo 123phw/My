@@ -1,35 +1,39 @@
 import sys
-
-
 def solution(rows, columns, queries):
-    arr = [[(i)*columns+(j+1) for j in range(columns)] for i in range(rows)]
-    result = []
+    answer = []
+    n=1
+    array=[[(i)*columns+(j+1) for j in range(columns)] for i in range(rows)]
     for x1, y1, x2, y2 in queries:
-        result.append(change(x1-1, y1-1, x2-1, y2-1, arr))
-    return result
+        answer.append(rotation(x1,y1,x2, y2,array))
 
+    return answer
+def rotation(x1, y1, x2, y2, array):
+    m=sys.maxsize
+    now=[x1,y1]
+    temp2=array[x1][y1-1] #14
+    #오
+    for i in range(y1,y2+1):
+        temp=array[x1-1][i-1] #현재값 temp에 저장
+        array[x1-1][i-1]=temp2 #이전값 가져오기
+        temp2=temp
+        m = min(m,temp)
+    #아
+    for i in range(x1+1, x2+1):
+        temp=array[i-1][y2-1]
+        array[i-1][y2-1]=temp2
+        temp2=temp
+        m = min(m,temp)
+    #왼
+    for i in range(y2-1,y1-1,-1):
+        temp=array[x2-1][i-1]
+        array[x2-1][i-1]=temp2
+        temp2=temp
+        m = min(m, temp)
+    #위
+    for i in range(x2-1,x1,-1):
+        temp=array[i-1][y1-1]
+        array[i-1][y1-1]=temp2
+        temp2=temp
+        m = min(m,temp)
 
-def change(x1, y1, x2, y2, arr):
-    min_value = sys.maxsize
-    # 맨 위의 맨 왼쪽 값을 기록
-    temp = arr[x1][y1]
-    # 왼쪽
-    for k in range(x1, x2):
-        arr[k][y1] = arr[k+1][y1]
-        min_value = min(min_value, arr[k+1][y1])
-    # 아래
-    for k in range(y1, y2):
-        arr[x2][k] = arr[x2][k+1]
-        min_value = min(min_value, arr[x2][k+1])
-    # 오른쪽
-    for k in range(x2, x1, -1):
-        arr[k][y2] = arr[k-1][y2]
-        min_value = min(min_value, arr[k-1][y2])
-    # 위
-    for k in range(y2, y1+1, -1):
-        arr[x1][k] = arr[x1][k-1]
-        min_value = min(min_value, arr[x1][k-1])
-    # 기록했던 값 업데이트
-    arr[x1][y1+1] = temp
-    min_value = min(min_value, temp)
-    return min_value
+    return m
